@@ -1,7 +1,10 @@
 package com.pluralsight.dealership.ui;
 
+import com.pluralsight.dealership.dao.DealershipDao;
 import com.pluralsight.dealership.models.*;
+import org.apache.commons.dbcp2.BasicDataSource;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,18 +12,22 @@ public class UserInterface {
 
     private static Dealership dealership;
 
+    private static Scanner userInput = new Scanner(System.in);
+    private static BasicDataSource dataSource = null;
+    private static DealershipDao dealershipDataManager = null;
+
     // private constructor so this class can't be instantiated
     private UserInterface(){
     }
 
-    // creates user input scanner
-    static Scanner userInput = new Scanner(System.in);
-
     // displays options to user
     public static void display(){
 
-        // calls method that loads the dealership
-        init();
+        // creates datasource
+        openDataSource();
+
+        // creates data managers
+        dealershipDataManager = new DealershipDao(dataSource);
 
         // loop for home menu
         boolean menu = true;
@@ -92,6 +99,7 @@ public class UserInterface {
                 // quits app
                 case 99:
                     System.out.println("\nNow stopping application, thank you.");
+                    closeDataSource();
                     menu = false;
                     break;
                 // when user doesn't choose a valid option
@@ -558,11 +566,27 @@ public class UserInterface {
     // ------------------------------------------------------------------------
 
     // other methods
-    private static void init(){
+    private static void openDataSource(){
+        // prompts user for password to database
+        System.out.print("Username: root\nPassword: ");
+        String password = userInput.nextLine().trim();
 
-        // creates instance of the dealership file manager
-        DealershipFileManager fileManager = new DealershipFileManager();
-        dealership = fileManager.getDealership();
+        // creates the datasource
+        dataSource = new BasicDataSource();
+
+        // sets url with username and password
+        dataSource.setUrl("jdbc:mysql://localhost:3306/sakila");
+        dataSource.setUsername("root");
+        dataSource.setPassword(password);
+    }
+
+    // closes datasource
+    public static void closeDataSource() {
+        try {
+            dataSource.close();
+        } catch (SQLException e) {
+            System.out.println("Error closing connection: " + e.getMessage());
+        }
     }
 
     // utility to use in other methods for displaying the vehicles list
