@@ -1,20 +1,19 @@
 package com.pluralsight.dealership.ui;
 
-import com.pluralsight.dealership.dao.DealershipDao;
+import com.pluralsight.dealership.dao.VehicleDao;
 import com.pluralsight.dealership.models.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class UserInterface {
 
-    private static Dealership dealership;
-
-    private static Scanner userInput = new Scanner(System.in);
-    private static BasicDataSource dataSource = null;
-    private static DealershipDao dealershipDataManager = null;
+    static Scanner userInput = new Scanner(System.in);
+    static BasicDataSource dataSource = null;
+    static VehicleDao vehicleDao = null;
 
     // private constructor so this class can't be instantiated
     private UserInterface(){
@@ -27,7 +26,7 @@ public class UserInterface {
         openDataSource();
 
         // creates data managers
-        dealershipDataManager = new DealershipDao(dataSource);
+        vehicleDao = new VehicleDao(dataSource);
 
         // loop for home menu
         boolean menu = true;
@@ -41,7 +40,7 @@ public class UserInterface {
                     3 - Find vehicles by year range
                     4 - Find vehicles by color
                     5 - Find vehicles by mileage range
-                    6 - Find vehicles by type (sedan, SUV, truck)
+                    6 - Find vehicles by vehicle type
                     7 - List ALL vehicles
                     8 - Add a vehicle
                     9 - Remove a vehicle
@@ -157,10 +156,11 @@ public class UserInterface {
         }
 
         // displays user's price range
-        System.out.printf("Here are vehicles listed from $%.2f to $%.2f\n", min, max);
+        System.out.printf("Here are vehicles listed from $%.2f to $%.2f\n\n", min, max);
 
         // calls filter method to filter through using user input and puts into new list
-        ArrayList<Vehicle> priceRangeList = dealership.getVehiclesByPrice(min, max);
+        List<Vehicle> priceRangeList = vehicleDao.getVehiclesByPrice(min, max);
+
         // displays vehicles by user's price range by looping through new list
         displayVehicles(priceRangeList);
     }
@@ -207,10 +207,11 @@ public class UserInterface {
         }
 
         // displays user's make and model
-        System.out.printf("Here are vehicles listed as %s %s\n", make, model);
+        System.out.printf("Here are vehicles listed as %s %s", make, model + ":\n\n");
 
         // calls filter method to filter through using user input and puts into new list
-        ArrayList<Vehicle> makeModelList = dealership.getVehiclesByMakeModel(make, model);
+        List<Vehicle> makeModelList = vehicleDao.getVehiclesByMakeModel(make, model);
+
         // displays vehicles by user's make and model by looping through new list
         displayVehicles(makeModelList);
     }
@@ -253,12 +254,13 @@ public class UserInterface {
         }
 
         // displays user's price range
-        System.out.printf("Here are vehicles listed from %d to %d\n", min, max);
+        System.out.printf("Here are vehicles listed from %d to %d\n\n", min, max);
 
         // calls filter method to filter through using user input and puts into new list
-        ArrayList<Vehicle> yearList = dealership.getVehiclesByYear(min, max);
+        List<Vehicle> yearRangeList = vehicleDao.getVehiclesByYear(min, max);
+
         // displays vehicles by user's year range by looping through new list
-        displayVehicles(yearList);
+        displayVehicles(yearRangeList);
 
     }
 
@@ -286,10 +288,11 @@ public class UserInterface {
         }
 
         // displays user's color
-        System.out.printf("Here are vehicles with the color %s\n", color);
+        System.out.printf("Here are vehicles with the color %s\n\n", color);
 
         // calls filter method to filter through using user input and puts into new list
-        ArrayList<Vehicle> colorList = dealership.getVehiclesByColor(color);
+        List<Vehicle> colorList = vehicleDao.getVehiclesByColor(color);
+
         // displays vehicles by user's color by looping through new list
         displayVehicles(colorList);
     }
@@ -332,10 +335,11 @@ public class UserInterface {
         }
 
         // displays user's price range
-        System.out.printf("Here are vehicles listed from %d to %d miles\n", min, max);
+        System.out.printf("Here are vehicles listed from %d to %d miles\n\n", min, max);
 
         // calls filter method to filter through using user input and puts into new list
-        ArrayList<Vehicle> mileageList = dealership.getVehiclesByMileage(min, max);
+        List<Vehicle> mileageList = vehicleDao.getVehiclesByMileage(min, max);
+
         // displays vehicles by user's year range by looping through new list
         displayVehicles(mileageList);
     }
@@ -347,7 +351,7 @@ public class UserInterface {
         String type = "";
 
         // prompts user a question
-        System.out.println("\nEnter the vehicle body style");
+        System.out.println("\nEnter the vehicle body style (sedan, coupe, crossover, truck, van)");
 
         while (true) {
 
@@ -365,19 +369,23 @@ public class UserInterface {
         }
 
         // displays user's vehicle type
-        System.out.printf("Here are vehicles with the body type %s\n", type);
+        System.out.printf("Here are vehicles with the body type %s\n\n", type);
 
         // calls filter method to filter through using user input and puts into new list
-        ArrayList<Vehicle> typeList = dealership.getVehiclesByType(type);
+        List<Vehicle> vehicleTypeList = vehicleDao.getVehiclesByType(type);
+
         // displays vehicles by user's type by looping through new list
-        displayVehicles(typeList);
+        displayVehicles(vehicleTypeList);
     }
 
     // finds all vehicles
     public static void processGetByAllVehiclesRequest(){
 
-        // calls method of grabbing all vehicles from inventory and stores it into new list
-        ArrayList<Vehicle> allVehiclesList = dealership.getAllVehicles();
+        System.out.print("\n");
+
+        // calls method of grabbing all vehicles and stores it into new list
+        List<Vehicle> allVehiclesList = vehicleDao.getAllVehicles();
+
         // displays all vehicles by looping through new list
         displayVehicles(allVehiclesList);
     }
@@ -389,8 +397,7 @@ public class UserInterface {
         System.out.println("Enter new vehicle details to add to inventory");
 
         System.out.print("VIN: ");
-        int vin = userInput.nextInt();
-        userInput.nextLine();
+        String vin = userInput.nextLine();
 
         System.out.print("Year: ");
         int year = userInput.nextInt();
@@ -416,51 +423,28 @@ public class UserInterface {
         double price = userInput.nextDouble();
         userInput.nextLine();
 
-        // creates the new vehicle to from details from user input
-        Vehicle addVehicle = new Vehicle(vin, year, make, model, type, color, odometer, price);
-
-        // adds the vehicle to the dealership inventory
-        dealership.addVehicle(addVehicle);
+        // adds vehicle
+        vehicleDao.addVehicle(vin, year, make, model, type, color, odometer, price);
 
         // displays the vehicle user added
-        System.out.printf("New vehicle: %d|%d|%s|%s|%s|%s|%d|$%.2f added!\n",
+        System.out.printf("New vehicle: %s|%d|%s|%s|%s|%s|%d|$%.2f added!\n",
                 vin, year, make, model, type, color, odometer, price);
-
-        // creates instance of the dealership file manager and adds vehicle to file
-        DealershipFileManager fileManager = new DealershipFileManager();
-        fileManager.saveDealership(dealership);
     }
 
     // removes a vehicle
     public static void processRemoveVehicleRequest(){
 
         // prompts user for vehicle to remove
-        System.out.println("Enter vehicle details to remove from inventory");
+        System.out.println("Enter vehicle VIN to remove from inventory");
 
         System.out.print("VIN: ");
-        int vin = userInput.nextInt();
-        userInput.nextLine();
+        String vin = userInput.nextLine();
 
-        Vehicle removedVehicle = null;
-        // finds the vehicle and vehicles vin in list
-        for (Vehicle vehicle : dealership.getAllVehicles()) {
-            // if a vehicle vin matches the user inputs vin
-            if (vehicle.getVin() == vin) {
-                // gets the matching vehicle and stores it
-                removedVehicle = vehicle;
-            }
-        }
-
-        // removes stored vehicle from dealership's inventory list using remove method
-        dealership.removeVehicle(removedVehicle);
+        // removes vehicle
+        vehicleDao.removeVehicle(vin);
 
         // displays the vehicle was removed
-        System.out.printf("Vehicle with VIN #%d was removed!\n", vin);
-        
-        // saves the dealership after a vehicle is removed
-        // creates instance of the dealership file manager and removes vehicle to file
-        DealershipFileManager fileManager = new DealershipFileManager();
-        fileManager.saveDealership(dealership);
+        System.out.printf("Vehicle with VIN %s was removed!\n", vin);
     }
 
     // sell or lease a vehicle
@@ -469,10 +453,6 @@ public class UserInterface {
         // prompts user to either sell or lease a vehicle
         System.out.print("Would you like to Sell or Lease a vehicle: ");
         String choice = userInput.nextLine().trim().toUpperCase();
-
-        // instantiates contract data manager
-        ContractDataManager dataManager = new ContractDataManager();
-        DealershipFileManager fileManager = new DealershipFileManager();
 
         // uses user input for switch
         switch (choice) {
@@ -491,8 +471,7 @@ public class UserInterface {
 
                 // user enters vin of vehicle and gets stored and then calls dealership method
                 System.out.print("Vehicle VIN: ");
-                int sellVinInput = userInput.nextInt();
-                userInput.nextLine();
+                String sellVinInput = userInput.nextLine();
                 // finds the vin and stores it in a vehicle class variable
                 Vehicle sellVin = dealership.getVehicleByVin(sellVinInput);
 
@@ -511,10 +490,6 @@ public class UserInterface {
 
                 // creates new sales contract from user input
                 SalesContract newSale = new SalesContract(sellDate, sellName, sellEmail, sellVin, isFinanced);
-
-                // saves contract and appends new contract by writing to the file
-                dataManager.saveContract(newSale);
-                fileManager.saveDealership(dealership);
 
                 // displays vehicle sold
                 System.out.print("Vehicle: " + sellVin + " was sold successfully!\n");
@@ -535,8 +510,7 @@ public class UserInterface {
 
                 // user enters vin of vehicle and gets stored and then calls dealership method
                 System.out.print("Vehicle VIN: ");
-                int leaseVinInput = userInput.nextInt();
-                userInput.nextLine();
+                String leaseVinInput = userInput.nextLine();
                 // finds the vin and stores it in a vehicle class variable
                 Vehicle leaseVin = dealership.getVehicleByVin(leaseVinInput);
 
@@ -548,10 +522,6 @@ public class UserInterface {
 
                 // creates new lease contract from user input
                 LeaseContract newLease = new LeaseContract(leaseDate, leaseName, leaseEmail, leaseVin);
-
-                // saves contract and appends new contract by writing to the file
-                dataManager.saveContract(newLease);
-                fileManager.saveDealership(dealership);
 
                 // displays vehicle leased
                 System.out.print("Vehicle: " + leaseVin + " was leased successfully!\n");
@@ -575,7 +545,7 @@ public class UserInterface {
         dataSource = new BasicDataSource();
 
         // sets url with username and password
-        dataSource.setUrl("jdbc:mysql://localhost:3306/sakila");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/cardealership");
         dataSource.setUsername("root");
         dataSource.setPassword(password);
     }
@@ -590,7 +560,7 @@ public class UserInterface {
     }
 
     // utility to use in other methods for displaying the vehicles list
-    private static void displayVehicles(ArrayList<Vehicle> vehicleList){
+    private static void displayVehicles(List<Vehicle> vehicleList){
 
         // creates list and assigns to a variable to display the list
         for (Vehicle filteredVehicle : vehicleList) {
