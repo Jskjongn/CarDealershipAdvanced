@@ -17,7 +17,7 @@ USE cardealership;
 # ---------------------------------------------------------------------- #
 
 CREATE TABLE `dealerships` (
-	`Dealership_ID` INT NOT NULL AUTO_INCREMENT, -- Primary Key
+	`Dealership_ID` INT NOT NULL AUTO_INCREMENT, -- primary Key
     `Name` VARCHAR(50) NOT NULL,
     `Address` VARCHAR(50) NOT NULL,
     `Phone` VARCHAR(15) NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE `dealerships` (
 # ---------------------------------------------------------------------- #
 
 CREATE TABLE `vehicles` (
-	`VIN` VARCHAR(17) NOT NULL,
+	`VIN` VARCHAR(17) NOT NULL, -- primary key
     `Year` INT NOT NULL,
     `Make` VARCHAR(25) NOT NULL,
     `Model` VARCHAR(25) NOT NULL,
@@ -46,8 +46,8 @@ CREATE TABLE `vehicles` (
 # ---------------------------------------------------------------------- #
 
 CREATE TABLE `inventory` (
-	`Dealership_ID` INT NOT NULL,
-    `VIN` VARCHAR(17) NOT NULL,
+	`Dealership_ID` INT NOT NULL, -- primary key
+    `VIN` VARCHAR(17) NOT NULL, -- primary key
     PRIMARY KEY (`Dealership_ID`, `VIN`),
     FOREIGN KEY (`Dealership_ID`) REFERENCES `dealerships` (`Dealership_ID`) ON DELETE CASCADE,
     FOREIGN KEY (`VIN`) REFERENCES `vehicles` (`VIN`) ON DELETE CASCADE
@@ -58,7 +58,7 @@ CREATE TABLE `inventory` (
 # ---------------------------------------------------------------------- #
 
 CREATE TABLE `sales_contracts` (
-	`Sales_Contract_ID` INTEGER NOT NULL AUTO_INCREMENT,
+	`Sales_Contract_ID` INTEGER NOT NULL AUTO_INCREMENT, -- primary key
 	`Date` DATE,
     `Customer_Name` VARCHAR(50) NOT NULL,
     `Customer_Email` VARCHAR(50) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE `sales_contracts` (
     `Total_Price` DECIMAL(10,2) NOT NULL,
     `Financed` ENUM('YES', 'NO') DEFAULT 'NO',
     `Monthly_Payment` DECIMAL(10,2) NOT NULL,
-    CONSTRAINT `PK_Sales_Contract_ID` PRIMARY KEY (`Sales_Contract_ID`),
+    PRIMARY KEY (`Sales_Contract_ID`),
     FOREIGN KEY (`VIN`) REFERENCES `vehicles` (`VIN`)
 );
 
@@ -78,7 +78,7 @@ CREATE TABLE `sales_contracts` (
 # ---------------------------------------------------------------------- #
 
 CREATE TABLE `lease_contracts` (
-	`Lease_Contract_ID` INTEGER NOT NULL AUTO_INCREMENT,
+	`Lease_Contract_ID` INTEGER NOT NULL AUTO_INCREMENT, -- primary key
 	`Date` DATE,
     `Customer_Name` VARCHAR(50) NOT NULL,
     `Customer_Email` VARCHAR(50) NOT NULL,
@@ -86,9 +86,8 @@ CREATE TABLE `lease_contracts` (
     `Ending_Value` DECIMAL(10,2) NOT NULL,
     `Lease_Fee` DECIMAL(10,2) NOT NULL,
     `Total_Price` DECIMAL(10,2) NOT NULL,
-    `Financed` ENUM('YES', 'NO') DEFAULT 'NO',
     `Monthly_Payment` DECIMAL(10,2) NOT NULL,
-    CONSTRAINT `PK_Lease_Contract_ID` PRIMARY KEY (`Lease_Contract_ID`),
+    PRIMARY KEY (`Lease_Contract_ID`),
     FOREIGN KEY (`VIN`) REFERENCES `vehicles` (`VIN`)
 );
 
@@ -282,20 +281,20 @@ VALUES
 # Add info into "lease_contracts"                                        #
 # ---------------------------------------------------------------------- #
 
-INSERT INTO `lease_contracts` (`Date`, `Customer_Name`, `Customer_Email`, `VIN`, `Ending_Value`, `Lease_Fee`, `Total_Price`, `Financed`, `Monthly_Payment`)
+INSERT INTO `lease_contracts` (`Date`, `Customer_Name`, `Customer_Email`, `VIN`, `Ending_Value`, `Lease_Fee`, `Total_Price`,  `Monthly_Payment`)
 VALUES
-  ('2023-07-12', 'Alice Johnson', 'alice.johnson@email.com', 'E9U92I3V2UHFQK0XC', 15298.45, 2140.78, 19000.25, 'NO', 527.79),
-  ('2024-01-05', 'Michael Smith', 'm.smith@email.com', 'KFWY2OGZX92I4IU3U', 7346.25, 1028.47, 9122.85, 'YES', 253.41),
-  ('2025-03-20', 'Samantha Green', 'samantha.green@email.com', 'YUNVX2W3XRAGLYJ2C', 12995.10, 1819.31, 16110.62, 'NO', 447.52),
-  ('2023-11-15', 'Daniel Lee', 'd.lee@email.com', 'HL2K2OJHM6U0SHUM9', 12033.19, 1684.65, 14922.72, 'NO', 414.52),
-  ('2024-06-30', 'Emily Carter', 'emily.carter@email.com', '8RGRKSHV0XTTHPZKN', 13523.64, 1893.31, 16755.52, 'YES', 465.43),
-  ('2023-02-27', 'Robert Brown', 'robert.brown@email.com', 'W9HATVK41KNWB3X0C', 7461.84, 1044.66, 9259.36, 'NO', 257.20),
-  ('2025-05-10', 'Jessica Turner', 'jess.turner@email.com', 'ZOC2ZT2WXXVEPYOKN', 12972.16, 1816.10, 16008.88, 'NO', 444.69),
-  ('2024-09-14', 'Brian Wilson', 'brian.wilson@email.com', '3J7O8VKEF4RKHN6R4', 21125.01, 2957.50, 26044.51, 'YES', 723.46),
-  ('2023-08-09', 'Laura Martinez', 'laura.martinez@email.com', '8RGRKSHV0XTTHPZKN', 13523.64, 1893.31, 16755.52, 'NO', 465.43),
-  ('2024-12-22', 'Kevin White', 'kevin.white@email.com', 'HL2K2OJHM6U0SHUM9', 12033.19, 1684.65, 14922.72, 'YES', 414.52),
-  ('2024-01-20', 'Logan Brooks', 'logan.brooks@email.com', '1K2Q2M5F8ZUR3XKZF', 9173.25, 1284.25, 11558.84, 'NO', 321.08),
-  ('2024-03-02', 'Ava Powell', 'ava.powell@email.com', '4LP54IXTZ6S0FY1O1', 22094.95, 3093.29, 30664.84, 'NO', 851.80),
-  ('2023-12-11', 'Mason Hayes', 'mason.hayes@email.com', '97EDSB6ZPQ51QLD2V', 7292.84, 1021.00, 9430.98, 'NO', 261.97),
-  ('2024-04-15', 'Lily Simmons', 'lily.simmons@email.com', 'D4MSZFGKGSR1SY7N5', 19465.13, 2725.12, 23919.88, 'NO', 664.44),
-  ('2023-10-27', 'Noah James', 'noah.james@email.com', 'A9BW1MM88PXK2ZGKM', 15333.75, 2146.72, 18760.90, 'NO', 521.14);
+  ('2023-07-12', 'Alice Johnson', 'alice.johnson@email.com', 'E9U92I3V2UHFQK0XC', 15298.45, 2140.78, 19000.25, 527.79),
+  ('2024-01-05', 'Michael Smith', 'm.smith@email.com', 'KFWY2OGZX92I4IU3U', 7346.25, 1028.47, 9122.85, 253.41),
+  ('2025-03-20', 'Samantha Green', 'samantha.green@email.com', 'YUNVX2W3XRAGLYJ2C', 12995.10, 1819.31, 16110.62, 447.52),
+  ('2023-11-15', 'Daniel Lee', 'd.lee@email.com', 'HL2K2OJHM6U0SHUM9', 12033.19, 1684.65, 14922.72, 414.52),
+  ('2024-06-30', 'Emily Carter', 'emily.carter@email.com', '8RGRKSHV0XTTHPZKN', 13523.64, 1893.31, 16755.52, 465.43),
+  ('2023-02-27', 'Robert Brown', 'robert.brown@email.com', 'W9HATVK41KNWB3X0C', 7461.84, 1044.66, 9259.36, 257.20),
+  ('2025-05-10', 'Jessica Turner', 'jess.turner@email.com', 'ZOC2ZT2WXXVEPYOKN', 12972.16, 1816.10, 16008.88, 444.69),
+  ('2024-09-14', 'Brian Wilson', 'brian.wilson@email.com', '3J7O8VKEF4RKHN6R4', 21125.01, 2957.50, 26044.51, 723.46),
+  ('2023-08-09', 'Laura Martinez', 'laura.martinez@email.com', '8RGRKSHV0XTTHPZKN', 13523.64, 1893.31, 16755.52, 465.43),
+  ('2024-12-22', 'Kevin White', 'kevin.white@email.com', 'HL2K2OJHM6U0SHUM9', 12033.19, 1684.65, 14922.72, 414.52),
+  ('2024-01-20', 'Logan Brooks', 'logan.brooks@email.com', '1K2Q2M5F8ZUR3XKZF', 9173.25, 1284.25, 11558.84, 321.08),
+  ('2024-03-02', 'Ava Powell', 'ava.powell@email.com', '4LP54IXTZ6S0FY1O1', 22094.95, 3093.29, 30664.84, 851.80),
+  ('2023-12-11', 'Mason Hayes', 'mason.hayes@email.com', '97EDSB6ZPQ51QLD2V', 7292.84, 1021.00, 9430.98, 261.97),
+  ('2024-04-15', 'Lily Simmons', 'lily.simmons@email.com', 'D4MSZFGKGSR1SY7N5', 19465.13, 2725.12, 23919.88, 664.44),
+  ('2023-10-27', 'Noah James', 'noah.james@email.com', 'A9BW1MM88PXK2ZGKM', 15333.75, 2146.72, 18760.90, 521.14);

@@ -1,7 +1,6 @@
 package com.pluralsight.dealership.ui;
 
-import com.pluralsight.dealership.dao.SalesContractDao;
-import com.pluralsight.dealership.dao.VehicleDao;
+import com.pluralsight.dealership.dao.*;
 import com.pluralsight.dealership.models.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 
@@ -14,8 +13,11 @@ public class UserInterface {
 
     static Scanner userInput = new Scanner(System.in);
     static BasicDataSource dataSource = null;
+    static DealershipDao dealershipDao = null;
+    static InventoryDao inventoryDao = null;
     static VehicleDao vehicleDao = null;
     static SalesContractDao salesContractDao = null;
+    static LeaseContractDao leaseContractDao = null;
 
     // private constructor so this class can't be instantiated
     private UserInterface(){
@@ -28,8 +30,11 @@ public class UserInterface {
         openDataSource();
 
         // creates data managers
+        dealershipDao = new DealershipDao(dataSource);
+        inventoryDao = new InventoryDao(dataSource);
         vehicleDao = new VehicleDao(dataSource);
         salesContractDao = new SalesContractDao(dataSource);
+        leaseContractDao = new LeaseContractDao(dataSource);
 
         // loop for home menu
         boolean menu = true;
@@ -396,6 +401,16 @@ public class UserInterface {
     // adds a vehicle
     public static void processAddVehicleRequest(){
 
+        List<Dealership> allDealershipsList = dealershipDao.getAllDealerships();
+
+        for (Dealership dealership : allDealershipsList) {
+            System.out.println(dealership);
+        }
+
+        System.out.print("\nEnter dealership ID to add vehicle to: ");
+        int id = userInput.nextInt();
+        userInput.nextLine();
+
         // prompts user for details of new vehicle to add
         System.out.println("Enter new vehicle details to add to inventory");
 
@@ -428,6 +443,7 @@ public class UserInterface {
 
         // adds vehicle
         vehicleDao.addVehicle(vin, year, make, model, type, color, odometer, price);
+        inventoryDao.addVehicleToInventory(id, vin);
 
         // displays the vehicle user added
         System.out.printf("New vehicle: %s|%d|%s|%s|%s|%s|%d|$%.2f added!\n",
@@ -465,7 +481,7 @@ public class UserInterface {
                 System.out.println("Enter customer details for this Sale: ");
 
                 // gets current date of sale
-                LocalDate currentDate = LocalDate.now();
+                LocalDate currentSaleDate = LocalDate.now();
 
                 System.out.print("Customer Name: ");
                 String sellName = userInput.nextLine().trim();
@@ -486,7 +502,7 @@ public class UserInterface {
                 // defaults to no but becomes true if yes
                 boolean isFinanced = financed.equals("YES");
 
-                SalesContract newSale = new SalesContract(currentDate, sellName, sellEmail, sellVin, isFinanced);
+                SalesContract newSale = new SalesContract(currentSaleDate, sellName, sellEmail, sellVin, isFinanced);
 
                 // creates new sales contract from user input
                 salesContractDao.newSalesContract(newSale, sellVinInput);
@@ -499,8 +515,9 @@ public class UserInterface {
 
                 // if user chose lease then user enters customer details
                 System.out.println("Enter customer details for this Lease: ");
-                System.out.print("Date (yyyy-MM-DD): ");
-                String leaseDate = userInput.nextLine();
+
+                // gets current date of sale
+                LocalDate currentLeaseDate = LocalDate.now();
 
                 System.out.print("Customer Name: ");
                 String leaseName = userInput.nextLine();
@@ -511,20 +528,16 @@ public class UserInterface {
                 // user enters vin of vehicle and gets stored and then calls dealership method
                 System.out.print("Vehicle VIN: ");
                 String leaseVinInput = userInput.nextLine();
-//                // finds the vin and stores it in a vehicle class variable
-//                Vehicle leaseVin = dealership.getVehicleByVin(leaseVinInput);
-//
-//                // if no vin is found
-//                if (leaseVin == null) {
-//                    System.out.println("Vehicle with VIN: " + leaseVinInput + " was not found.");
-//                    break;
-//                }
-//
-//                // creates new lease contract from user input
-//                LeaseContract newLease = new LeaseContract(leaseDate, leaseName, leaseEmail, leaseVin);
-//
-//                // displays vehicle leased
-//                System.out.print("Vehicle: " + leaseVin + " was leased successfully!\n");
+                // finds the vin and stores it in a vehicle class variable
+                Vehicle leaseVin = vehicleDao.getVehicleByVin(leaseVinInput);
+
+                // creates new lease contract from user input
+                LeaseContract newLease = new LeaseContract(currentLeaseDate, leaseName, leaseEmail, leaseVin);
+
+                leaseContractDao.newLeaseContract(newLease, leaseVinInput);
+
+                // displays vehicle leased
+                System.out.print("Vehicle: " + leaseVin + " was leased successfully!\n");
 
                 break;
             default:

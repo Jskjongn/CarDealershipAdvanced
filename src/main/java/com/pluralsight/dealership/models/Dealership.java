@@ -5,17 +5,17 @@ import java.util.ArrayList;
 public class Dealership {
 
     // properties of a dealership
+    private int id;
     private String name;
     private String address;
     private String phone;
-    private ArrayList<Vehicle> inventory;
 
     // constructor
-    public Dealership(String name, String address, String phone) {
+    public Dealership(int id, String name, String address, String phone) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.phone = phone;
-        inventory = new ArrayList<>();
     }
 
     // ------------------------------------------------------------------------
@@ -43,5 +43,24 @@ public class Dealership {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("""
+                
+                ID: %d
+                Name: %s
+                Address: %s
+                Phone: %s
+                """, this.id, this.name, this.address, this.phone);
     }
 }

@@ -300,7 +300,7 @@ public class VehicleDao {
 
     public static List<Vehicle> getVehiclesByType(String type) {
 
-        // creates new list to hold vehicles that match a color
+        // creates new list to hold vehicles that match a type
         List<Vehicle> vehicleTypeList = new ArrayList<>();
 
         try (
@@ -354,7 +354,7 @@ public class VehicleDao {
 
     public static List<Vehicle> getAllVehicles() {
 
-        // creates new list to hold vehicles that match a color
+        // creates new list to hold all vehicles
         List<Vehicle> allVehiclesList = new ArrayList<>();
 
         try (
