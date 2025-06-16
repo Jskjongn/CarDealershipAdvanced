@@ -1,5 +1,7 @@
 package com.pluralsight.dealership.models;
 
+import java.time.LocalDate;
+
 // subclass that extends parent class
 public class LeaseContract extends Contract {
 
@@ -8,7 +10,7 @@ public class LeaseContract extends Contract {
     private double leaseFee;
 
     // constructor to create a lease
-    public LeaseContract(String date, String customerName, String customerEmail, Vehicle vehicleSold) {
+    public LeaseContract(LocalDate date, String customerName, String customerEmail, Vehicle vehicleSold) {
         super(date, customerName, customerEmail, vehicleSold);
         this.endingValue = this.getVehicleSold().getPrice() / 2; // half the value of the vehicle price
         this.leaseFee = this.getVehicleSold().getPrice() * 0.07; // lease fee of 7% of the vehicle price

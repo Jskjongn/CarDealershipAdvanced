@@ -1,16 +1,18 @@
 package com.pluralsight.dealership.models;
 
+import java.time.LocalDate;
+
 // abstract so a generic contract can't be made
 public abstract class Contract {
 
     // properties of a contract
-    private String date;
+    private LocalDate date;
     private String customerName;
     private String customerEmail;
     private Vehicle vehicleSold;
 
     // constructor to create a contract
-    public Contract(String date, String customerName, String customerEmail, Vehicle vehicleSold) {
+    public Contract(LocalDate date, String customerName, String customerEmail, Vehicle vehicleSold) {
         this.date = date;
         this.customerName = customerName;
         this.customerEmail = customerEmail;
@@ -20,11 +22,11 @@ public abstract class Contract {
     // ------------------------------------------------------------------------
 
     // getters and setters
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

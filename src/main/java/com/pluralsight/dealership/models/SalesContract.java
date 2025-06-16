@@ -1,5 +1,7 @@
 package com.pluralsight.dealership.models;
 
+import java.time.LocalDate;
+
 // subclass that extends parent class
 public class SalesContract extends Contract {
 
@@ -10,7 +12,7 @@ public class SalesContract extends Contract {
     private boolean financed;
 
     // constructor to create a sales contract
-    public SalesContract(String date, String customerName, String customerEmail, Vehicle vehicleSold, boolean financed) {
+    public SalesContract(LocalDate date, String customerName, String customerEmail, Vehicle vehicleSold, boolean financed) {
         super(date, customerName, customerEmail, vehicleSold);
         this.financed = financed;
         this.salesTaxAmount = (0.05 * this.getVehicleSold().getPrice()); // 5% sales tax

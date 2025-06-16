@@ -44,22 +44,4 @@ public class Dealership {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-
-    // ------------------------------------------------------------------------
-
-    public Vehicle getVehicleByVin(String vin) {
-
-        // loops through inventory and stores it
-        for (int i = 0; i < inventory.size(); i++) {
-            Vehicle vehicle = inventory.get(i);
-            // if vehicle vin matches user input vin, it removes vehicle and returns it
-            if (vehicle.getVin().equals(vin)) {
-                removeVehicle(vehicle);
-                return vehicle;
-            }
-        }
-
-        // if no vin is found
-        return null;
-    }
 }

@@ -439,4 +439,18 @@ public class VehicleDao {
             System.out.println("Error removing vehicle: " + e.getMessage());
         }
     }
+
+    public Vehicle getVehicleByVin(String vin) {
+
+        // loops through all vehicles and stores it
+        for (int i = 0; i < getAllVehicles().size(); i++) {
+            Vehicle vehicle = getAllVehicles().get(i);
+            // if vehicle vin matches user input vin, returns vehicle object
+            if (vehicle.getVin().equals(vin)) {
+                return vehicle;
+            }
+        }
+        // if no vin is found
+        return null;
+    }
 }
