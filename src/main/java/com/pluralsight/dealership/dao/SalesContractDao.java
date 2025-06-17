@@ -16,14 +16,14 @@ public class SalesContractDao {
         this.salesDataSource = salesDataSource;
     }
 
-    public void newSalesContract(SalesContract newSale, String vin) {
+    public void newSalesContract(SalesContract newSale) {
 
         try (
                 Connection connection = salesDataSource.getConnection();
 
                 PreparedStatement preparedStatement = connection.prepareStatement("""
                         INSERT INTO
-                        `sales_contracts` (`Date`, `Customer_Name`, `Customer_Email`, `VIN`, `Sales_Tax`, `Recording_Fee`, `Processing_Fee`, `Total_Price`, `Financed`, `Monthly_Payment`)\s
+                        `sales_contracts` (`Date`, `Customer_Name`, `Customer_Email`, `VIN`, `Sales_Tax`, `Recording_Fee`, `Processing_Fee`, `Total_Price`, `Financed`, `Monthly_Payment`)
                         VALUES
                         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """);
@@ -32,7 +32,7 @@ public class SalesContractDao {
             preparedStatement.setDate(1, Date.valueOf(newSale.getDate()));
             preparedStatement.setString(2, newSale.getCustomerName());
             preparedStatement.setString(3, newSale.getCustomerEmail());
-            preparedStatement.setString(4, vin);
+            preparedStatement.setString(4, newSale.getVehicleSold().getVin());
             preparedStatement.setDouble(5, newSale.getSalesTaxAmount());
             preparedStatement.setDouble(6, newSale.getRecordingFee());
             preparedStatement.setDouble(7, newSale.getProcessingFee());

@@ -17,7 +17,7 @@ public class LeaseContractDao {
         this.leaseDataSource = leaseDataSource;
     }
 
-    public void newLeaseContract(LeaseContract newLease, String vin) {
+    public void newLeaseContract(LeaseContract newLease) {
 
         try (
                 Connection connection = leaseDataSource.getConnection();
@@ -32,7 +32,7 @@ public class LeaseContractDao {
             preparedStatement.setDate(1, Date.valueOf(newLease.getDate()));
             preparedStatement.setString(2, newLease.getCustomerName());
             preparedStatement.setString(3, newLease.getCustomerEmail());
-            preparedStatement.setString(4, vin);
+            preparedStatement.setString(4, newLease.getVehicleSold().getVin());
             preparedStatement.setDouble(5, newLease.getEndingValue());
             preparedStatement.setDouble(6, newLease.getLeaseFee());
             preparedStatement.setDouble(7, newLease.getTotalPrice());

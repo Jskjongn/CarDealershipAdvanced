@@ -505,7 +505,7 @@ public class UserInterface {
                 SalesContract newSale = new SalesContract(currentSaleDate, sellName, sellEmail, sellVin, isFinanced);
 
                 // creates new sales contract from user input
-                salesContractDao.newSalesContract(newSale, sellVinInput);
+                salesContractDao.newSalesContract(newSale);
 
                 // displays vehicle sold
                 System.out.print("Vehicle: " + sellVin + " was sold successfully!\n");
@@ -534,7 +534,7 @@ public class UserInterface {
                 // creates new lease contract from user input
                 LeaseContract newLease = new LeaseContract(currentLeaseDate, leaseName, leaseEmail, leaseVin);
 
-                leaseContractDao.newLeaseContract(newLease, leaseVinInput);
+                leaseContractDao.newLeaseContract(newLease);
 
                 // displays vehicle leased
                 System.out.print("Vehicle: " + leaseVin + " was leased successfully!\n");
